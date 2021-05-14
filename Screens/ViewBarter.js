@@ -23,7 +23,31 @@ export default class ViewBarter extends React.Component
             "SellerName" : this.props.navigation.getParam('details')[ 'sellerName' ],       
             "SellerEmail" : this.props.navigation.getParam('details')[ 'sellerEmail' ],       
             "Reason" : this.props.navigation.getParam('details')[ 'reason' ],       
+            "isRequestAldready" : "maybe",
         }
+    }
+
+    isRequestAldready = async () =>
+    {
+        db.collection("Notifications").where("BuyerEmail", "==", this.state.UserId).onSnapshot( ( snapshot ) => {
+            var data = snapshot.docs.map(( doc ) => { doc.data() })
+            if( data.length === 0 )
+            {
+                this.setState(
+                    {
+                        "isRequestAldready" : "false",
+                    }
+                )
+            }
+            else
+            {
+                this.setState(
+                    {
+                        "isRequestAldready" : "true",
+                    }
+                )
+            }
+        })
     }
 
     getInfo = () =>
@@ -68,6 +92,7 @@ export default class ViewBarter extends React.Component
     componentDidMount = () =>
     {
         this.getInfo();
+        this.isRequestAldready();
     }
 
     render()
@@ -79,7 +104,7 @@ export default class ViewBarter extends React.Component
                     leftComponent = {
                         <View>
                             <View style = {{ flexDirection : 'row', width : 18000 }}>
-                                <Icon name = { "chevron-left" } type = { "font-awesome" } style = {{ marginTop : 6,  }} onPress = {() => { this.props.navigation.navigate("HomeScreen") }}/>
+                                <Icon name = { "chevron-left" } type = { "font-awesome" } style = {{ marginTop : 6,  }} onPress = {() => { this.props.navigation.goBack(); this.props.navigation.navigate("HomeScreen") }}/>
                                 <Text style = {{ fontWeight : "bold", fontSize : 30, marginLeft : 10, }}>{ this.state.ProductName }</Text>
                             </View>
                         </View>
@@ -118,9 +143,10 @@ export default class ViewBarter extends React.Component
                             style = {{ padding : 10, }} 
                             buttonStyle = {{ backgroundColor : "#df2800" }}
                             onPress = {() => { this.sendNotification() }} 
-                            disabled = { this.state.UserId === this.state.SellerEmail ? true : false }
+                            disabled = { this.state.UserId === this.state.SellerEmail || this.state.isRequestAldready === "true" ? true : false }
                             icon = { <Icon name = "shopping-cart" type = "font-awesome" color = "#fff" size = { 30 } /> }
                         />
+                        <Text style = {{ textAlign : "center", fontWeight : "bold",  }}>{ this.state.isRequestAldready === "true" ? "You Aldready Have Requested a Barter" : " " }</Text>
                     </View>
                 </View>
             </View>

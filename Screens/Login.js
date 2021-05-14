@@ -211,7 +211,7 @@ export default class Login extends React.Component {
             <Text style = {[ styles.LoginText, { marginTop : '10%', } ]}> EMAIL / USERNAME </Text>
             <TextInput value = { this.state.email } style = { styles.LoginInput } placeholder = { 'abc@example.com' } onChangeText = {( data ) => { this.setState({ email : data, }) }} />
             <Text style = {[ styles.LoginText, { marginTop : '5%', } ]}> PASSWORD </Text>
-            <TextInput value = { this.state.password } style = { styles.LoginInput } placeholder = { '*******' } secureTextEntry = { true } onChangeText = {( data ) => { this.setState({ password : data, }) }} />
+            <TextInput value = { this.state.password } style = { styles.LoginInput } placeholder = { '*******' } secureTextEntry = { true } onChangeText = {( data ) => { this.setState({ password : data, }) }} onEndEntry = {() => { this.login() }} />
           </View>
 
           <View>
